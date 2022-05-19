@@ -13,5 +13,8 @@ class Rook(Piece):
     def can_move(self, target_cell) -> bool:
         if (not super().can_move(target_cell)):
             return False
-        else:
+        if (self.cell.is_empty_vertical(target_cell)):
             return True
+        if (self.cell.is_empty_horizontal(target_cell)):
+            return True
+        return False

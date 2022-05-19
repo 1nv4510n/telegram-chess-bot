@@ -118,6 +118,22 @@ class Cell:
                 return False
         return True
     
+    def is_empty_diagonal(self, target_cell) -> bool:
+        absX = abs(target_cell.x - self.x)
+        absY = abs(target_cell.y - self.y)
+        
+        if (absX != absY):
+            return False
+        
+        dy = 1 if self.y < target_cell.y else -1
+        dx = 1 if self.x < target_cell.x else -1
+        
+        for i in range(1, absY):
+            if (not self.board.get_cell(self.x + dx * i, self.y + dy * i).is_empty()):
+                return False
+        
+        return True
+        
     def set_piece(self, piece: Piece):
         self.piece = piece
         self.piece.cell = self
