@@ -13,5 +13,8 @@ class Knight(Piece):
     def can_move(self, target_cell) -> bool:
         if (not super().can_move(target_cell)):
             return False
-        else:
-            return True
+
+        dx = abs(self.cell.x - target_cell.x)
+        dy = abs(self.cell.y - target_cell.y)
+        
+        return (dx == 1 and dy == 2) or (dx == 2 and dy == 1)

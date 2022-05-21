@@ -3,7 +3,7 @@ from chess.enums import Colors, PieceNames
 class Piece:
     def __init__(self, color: Colors, cell) -> None:
         self.cell = cell
-        self.color = color
+        self.color: Colors = color
         self.cell.piece = self
         self.logo = None
         self.name = PieceNames.PIECE
@@ -15,6 +15,9 @@ class Piece:
             if (cell_target.piece.name == PieceNames.KING):
                 return False
         return True
+    
+    def get_attack_direction(self):
+        pass
     
     def move_piece(self, target) -> None:
         pass
