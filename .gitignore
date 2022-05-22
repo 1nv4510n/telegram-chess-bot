@@ -4,4 +4,4 @@ chess/pieces/__pycache__/king.cpython-310.pyc
 chess/pieces/__pycache__/knight.cpython-310.pyc
 chess/pieces/__pycache__/pawn.cpython-310.pyc
 chess/pieces/__pycache__/piece.cpython-310.pyc
-chess/.vscode
+.vscode/
