@@ -12,8 +12,6 @@ class Piece:
         if cell_target.piece:
             if (cell_target.piece.color == self.color):
                 return False
-            if (cell_target.piece.name == PieceNames.KING):
-                return False
         return True
     
     def get_attack_direction(self):

@@ -25,6 +25,9 @@ class Cell:
         return f'{horizontal[size - self.x]}{vertical[size - self.y]}'
         
     def is_empty(self) -> bool:
+        if (self.piece):
+            if (self.piece.name == PieceNames.KING):
+                return True
         return self.piece == None
     
     def is_enemy(self, target_cell) -> bool:
@@ -69,6 +72,31 @@ class Cell:
                 return False
         
         return True
+    
+    def get_path_to_cell(self, target_cell) -> list:
+        min_y_value = min(self.y, target_cell.y)
+        max_y_value = max(self.y, target_cell.y)
+        min_x_value = min(self.x, target_cell.x)
+        max_x_value = max(self.x, target_cell.x)
+        absX = abs(target_cell.x - self.x)
+        absY = abs(target_cell.y - self.y)
+        
+        path = []
+        
+        if (self.x == target_cell.x):
+            for y in range(min_y_value + 1, max_y_value + 1):
+                path.append(self.board.get_cell(self.x, y).to_pgn())
+        elif (self.y == target_cell.y):
+            for x in range(min_x_value + 1, max_x_value + 1):
+                path.append(self.board.get_cell(x, self.y).to_pgn())
+        elif (absX == absY): 
+            dy = 1 if self.y < target_cell.y else -1
+            dx = 1 if self.x < target_cell.x else -1
+            
+            for i in range(1, absY + 1):
+                path.append(self.board.get_cell(self.x + dx * i, self.y + dy * i).to_pgn())
+        
+        return path
         
     def set_piece(self, piece: Piece):
         self.piece = piece
