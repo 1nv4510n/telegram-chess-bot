@@ -5,3 +5,8 @@ chess/pieces/__pycache__/knight.cpython-310.pyc
 chess/pieces/__pycache__/pawn.cpython-310.pyc
 chess/pieces/__pycache__/piece.cpython-310.pyc
 .vscode/
+chess/__pycache__/__init__.cpython-310.pyc
+chess/__pycache__/enums.cpython-310.pyc
+chess/pieces/__pycache__/__init__.cpython-310.pyc
+chess/pieces/__pycache__/queen.cpython-310.pyc
+chess/pieces/__pycache__/rook.cpython-310.pyc

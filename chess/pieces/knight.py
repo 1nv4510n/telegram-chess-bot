@@ -10,8 +10,8 @@ class Knight(Piece):
         self.logo = black_logo if color == Colors.BLACK else white_logo
         self.name = PieceNames.KNIGHT
         
-    def can_move(self, target_cell) -> bool:
-        if (not super().can_move(target_cell)):
+    def can_move(self, target_cell, support_check = False) -> bool:
+        if (not super().can_move(target_cell, support_check)):
             return False
 
         dx = abs(self.cell.x - target_cell.x)

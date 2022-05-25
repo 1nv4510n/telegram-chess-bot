@@ -13,8 +13,8 @@ class Pawn(Piece):
         
         self.is_first_step = True
         
-    def can_move(self, target_cell) -> bool:
-        if (not super().can_move(target_cell)):
+    def can_move(self, target_cell, support_check = False) -> bool:
+        if (not super().can_move(target_cell, support_check)):
             return False
         
         if (self.cell.piece):
@@ -48,12 +48,12 @@ class Pawn(Piece):
         return pos 
             
 
-    def move_piece(self, target_cell) -> None:
-        super().move_piece(target_cell)
+    def move_piece(self) -> None:
+        super().move_piece()
         self.is_first_step = False
         
-        if (self.color == Colors.BLACK and target_cell.y == 7):
+        if (self.color == Colors.BLACK and self.cell.y == 7):
             self.cell = Queen(Colors.BLACK, self.cell)
             
-        if (self.color == Colors.WHITE and target_cell.y == 0):
+        if (self.color == Colors.WHITE and self.cell.y == 0):
             self.cell = Queen(Colors.WHITE, self.cell)

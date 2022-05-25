@@ -10,8 +10,8 @@ class Bishop(Piece):
         self.logo = black_logo if color == Colors.BLACK else white_logo
         self.name = PieceNames.BISHOP
         
-    def can_move(self, target_cell) -> bool:
-        if (not super().can_move(target_cell)):
+    def can_move(self, target_cell, support_check = False) -> bool:
+        if (not super().can_move(target_cell, support_check)):
             return False
         if (self.cell.is_empty_diagonal(target_cell)):
             return True
