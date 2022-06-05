@@ -14,7 +14,7 @@ from .commands import set_commands
 from .db.base import Base
 from .middlewares.db_middleware import DbSessionMiddleware
 
-from .handlers.users import default, chess
+from .handlers.users import default, search_game
 
 
 async def main():
@@ -42,7 +42,7 @@ async def main():
     dp.message.middleware(DbSessionMiddleware(db_pool))
     
     dp.include_router(default.router)
-    dp.include_router(chess.router)
+    dp.include_router(search_game.router)
     
     await set_commands(bot)
     

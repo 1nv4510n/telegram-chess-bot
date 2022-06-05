@@ -10,3 +10,4 @@ bot/handlers/users/__pycache__/
 bot/handlers/errors/__pycache__/
 bot/handlers/admins/__pycache__/
 bot/keyboards/__pycache__/
+bot/filters/__pycache__/

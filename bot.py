@@ -5,6 +5,7 @@ from bot import __main__
 from bot import chess
 from bot.chess.enums import Colors, PieceIcons, PieceNames
 from bot.chess.player import Player
+
 asyncio.run(__main__.main())
 
 # async def main():

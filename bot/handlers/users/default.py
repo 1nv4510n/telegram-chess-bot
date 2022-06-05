@@ -1,9 +1,8 @@
-from uuid import uuid4
 from aiogram import Router, F
 from aiogram.types import Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.keyboards.kb_menu import make_menu_keyboard
+from bot.keyboards.kb_default import make_menu_keyboard
 from bot.db.requests import add_user
 
 router = Router()

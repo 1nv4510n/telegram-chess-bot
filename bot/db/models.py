@@ -1,4 +1,4 @@
-from sqlalchemy import BigInteger, Column, String, Boolean
+from sqlalchemy import BigInteger, Column, String, Boolean, Integer
 from sqlalchemy.dialects.postgresql import UUID
 
 from bot.db.base import Base
@@ -16,6 +16,7 @@ class PlayersEntry(Base):
     __tablename__ = "players"
     
     telegram_id = Column(BigInteger, nullable=False, unique=True, primary_key=True)
+    rating = Column(Integer, nullable=False)
     searching = Column(Boolean, nullable=False)
     playing = Column(Boolean, nullable=False)
     game_id = Column(UUID, nullable=True)
