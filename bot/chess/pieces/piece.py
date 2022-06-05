@@ -6,6 +6,7 @@ class Piece:
         self.color: Colors = color
         self.cell.piece = self
         self.logo = None
+        self.icon = None
         self.name = PieceNames.PIECE
         
     def can_move(self, cell_target, support_check = False) -> bool:

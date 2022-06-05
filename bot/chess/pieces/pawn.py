@@ -1,4 +1,4 @@
-from chess.enums import Colors, PieceNames
+from chess.enums import Colors, PieceIcons, PieceNames
 from .piece import Piece
 from .queen import Queen
 
@@ -9,6 +9,7 @@ class Pawn(Piece):
     def __init__(self, color: Colors, cell) -> None:
         super().__init__(color, cell)
         self.logo = black_logo if color == Colors.BLACK else white_logo
+        self.icon = PieceIcons.PAWN
         self.name = PieceNames.PAWN
         
         self.is_first_step = True

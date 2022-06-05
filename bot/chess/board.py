@@ -1,8 +1,6 @@
-from operator import ge
-from typing import List, Optional
+from typing import List, Optional, Union
 from .pieces import *
 from .enums import Colors, PieceNames
-import asyncio
 
 class Cell:
     def __init__(self, board, x: int, y: int, color: Colors, piece: Optional[Piece]) -> None:
@@ -15,9 +13,9 @@ class Cell:
     #delete in future
     def cell_to_text(self) -> str:
         if (not self.piece):
-            return '--'
+            return None
         else:
-            return f'{self.piece.color.value}{self.piece.name.value}'
+            return f'{self.piece.name.value}{self.to_pgn()}'
         
     def to_pgn(self) -> str:
         size = 7
@@ -111,7 +109,23 @@ class Cell:
                 target_cell.set_piece(self.piece)
                 self.piece = None
                 target_cell.piece.move_piece()
-
+                
+    def is_attacked(self, opposite_color: Colors) -> bool:
+        for i in range(len(self.board.cells)):
+            row = self.board.cells[i]
+            for j in range(len(row)):
+                target_cell = row[j]
+                if target_cell.piece and target_cell.piece.color == opposite_color:
+                    if target_cell.piece.name == PieceNames.KING:
+                        if self.to_pgn() in target_cell.piece.get_attack_direction():
+                            return True
+                    elif target_cell.piece.name == PieceNames.PAWN:
+                        if self.to_pgn() in target_cell.piece.get_attack_direction():
+                            return True
+                    else:
+                        if target_cell.piece.can_move(self):
+                            return True
+        return False
 
 class Board:
     def __init__(self) -> None:
@@ -126,7 +140,7 @@ class Board:
                     row.append(Cell(self, j, i, Colors.WHITE, None))
             self.cells.append(row)
              
-    def get_copy(self):
+    def get_copy(self) -> None:
         new_board = Board()
         new_board.cells = self.cells
         return new_board
@@ -139,21 +153,26 @@ class Board:
         vertical = '87654321'
         return self.cells[vertical.index(pgn[1])][horizontal.index(pgn[0])]
     
-    def highlight_moves(self, selected_cell: Cell):
+    def highlight_moves(self, selected_cell: Cell) -> List[str]:
         highlited = []
         if (selected_cell.piece):
-            for i in range(len(self.cells)):
-                row = self.cells[i]
-                for j in range(len(row)):
-                    target_cell = row[j]
-                    if selected_cell.piece.can_move(target_cell):
-                        highlited.append(target_cell.to_pgn())
+            if selected_cell.piece.name == PieceNames.KING:
+                for move in selected_cell.piece.get_attack_direction():
+                    if selected_cell.piece.can_move(self.get_cell_from_pgn(move)):
+                        highlited.append(move)
+            else:
+                for i in range(len(self.cells)):
+                    row = self.cells[i]
+                    for j in range(len(row)):
+                        target_cell = row[j]
+                        if selected_cell.piece.can_move(target_cell):
+                            highlited.append(target_cell.to_pgn())
         else:
             return None
         
         return highlited
     
-    def get_all_moves(self, color: Colors):
+    def get_all_moves(self, color: Colors) -> List[str]:
         moves = []
         for i in range(len(self.cells)):
             row = self.cells[i]
@@ -163,38 +182,38 @@ class Board:
                     moves += self.highlight_moves(target_cell)
         return moves
     
-    def __add_pawns(self):
+    def __add_pawns(self) -> None:
         for i in range(8):
             Pawn(Colors.BLACK, self.get_cell(i, 1))
             Pawn(Colors.WHITE, self.get_cell(i, 6))
 
-    def __add_rooks(self):
+    def __add_rooks(self) -> None:
         Rook(Colors.BLACK, self.get_cell(0, 0))
         Rook(Colors.BLACK, self.get_cell(7, 0))
         Rook(Colors.WHITE, self.get_cell(0, 7))
         Rook(Colors.WHITE, self.get_cell(7, 7))
         
-    def __add_knights(self):
+    def __add_knights(self) -> None:
         Knight(Colors.BLACK, self.get_cell(1, 0))
         Knight(Colors.BLACK, self.get_cell(6, 0))
         Knight(Colors.WHITE, self.get_cell(1, 7))
         Knight(Colors.WHITE, self.get_cell(6, 7))
         
-    def __add_bishops(self):
+    def __add_bishops(self) -> None:
         Bishop(Colors.BLACK, self.get_cell(2, 0))
         Bishop(Colors.BLACK, self.get_cell(5, 0))
         Bishop(Colors.WHITE, self.get_cell(2, 7))
         Bishop(Colors.WHITE, self.get_cell(5, 7))
         
-    def __add_queens(self):
+    def __add_queens(self) -> None:
         Queen(Colors.BLACK, self.get_cell(3, 0))
         Queen(Colors.WHITE, self.get_cell(3, 7))
         
-    def __add_kings(self):
+    def __add_kings(self) -> None:
         King(Colors.BLACK, self.get_cell(4, 0))
         King(Colors.WHITE, self.get_cell(4, 7))
         
-    def add_pieces(self):
+    def add_pieces(self) -> None:
         self.__add_pawns()
         self.__add_rooks()
         self.__add_knights()
@@ -202,7 +221,7 @@ class Board:
         self.__add_queens()
         self.__add_kings()
         
-    def get_pieces(self, name: PieceNames, color: Colors):
+    def get_pieces(self, name: PieceNames, color: Colors) -> List[Cell]:
         piece_list = []
         for i in range(len(self.cells)):
             row = self.cells[i]
@@ -212,7 +231,7 @@ class Board:
                     piece_list.append(check_cell)
         return piece_list
     
-    def king_is_under_check(self, color: Colors) -> list:
+    def king_is_under_check(self, color: Colors) -> List:
         check_pieces = []
         king = self.get_pieces(PieceNames.KING, color)[0]
         for i in range(len(self.cells)):
@@ -229,7 +248,7 @@ class Board:
                             
         return check_pieces
     
-    def king_escape_moves(self, color: Colors) -> list:
+    def king_escape_moves(self, color: Colors) -> List[List[Union[Cell, str]]]:
         king = self.get_pieces(PieceNames.KING, color)[0]
         check_source = self.king_is_under_check(color)
         if check_source:
@@ -256,7 +275,7 @@ class Board:
                                 check_cell_moves = check_cell.board.highlight_moves(check_cell)
                                 for move in check_cell_moves:
                                     if move in attack_lines:
-                                        escape_moves.append([check_cell.piece.name.value, move])
+                                        escape_moves.append([check_cell, move])
                                         break
                 return escape_moves
             else:
@@ -264,13 +283,32 @@ class Board:
         else:
             return None
         
+    def is_checkmate(self, color: Colors) -> bool:
+        if self.king_escape_moves(color) == []:
+            return True
+        return False
+    
+    def is_stalemate(self, color: Colors) -> bool:
+        if self.king_is_under_check(color) == [] and self.get_all_moves(color) == []:
+            return True
+        return False
+        
     #delete in future
-    def get_text_board(self) -> str:
+    def get_text_board(self, rotate_board: bool = False) -> str:
         text_board: str = ''
-        for i in range(8):
-            text_board += f'{i} ['
-            for j in range(8):
-                text_board += f'{self.get_cell(j, i).cell_to_text()} '
-            text_board += ']\n'
-        text_board += 'X: 0  1  2  3  4  5  6  7'
-        return text_board
+        if not rotate_board:
+            for i in range(8):
+                text_board += f'{i} ['
+                for j in range(8):
+                    text_board += f'{self.get_cell(j, i).cell_to_text()} '
+                text_board += ']\n'
+            text_board += 'X: 0  1  2  3  4  5  6  7'
+            return text_board
+        else:
+            for i in range(7, -1, -1):
+                text_board += f'{i} ['
+                for j in range(7, -1, -1):
+                    text_board += f'{self.get_cell(j, i).cell_to_text()} '
+                text_board += ']\n'
+            text_board += 'X: 0  1  2  3  4  5  6  7'
+            return text_board
