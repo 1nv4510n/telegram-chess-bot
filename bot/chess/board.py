@@ -1,6 +1,6 @@
 from typing import List, Optional, Union
 from .pieces import *
-from .enums import Colors, PieceNames
+from .enums import Colors, PieceIcons, PieceNames
 
 class Cell:
     def __init__(self, board, x: int, y: int, color: Colors, piece: Optional[Piece]) -> None:
@@ -149,6 +149,8 @@ class Board:
         return self.cells[y][x]
     
     def get_cell_from_pgn(self, pgn: str) -> Cell:
+        if len(pgn) == 3:
+            pgn = pgn[1:]
         horizontal = 'abcdefgh'
         vertical = '87654321'
         return self.cells[vertical.index(pgn[1])][horizontal.index(pgn[0])]
@@ -172,14 +174,20 @@ class Board:
         
         return highlited
     
-    def get_all_moves(self, color: Colors) -> List[str]:
+    def get_all_moves(self, color: Colors, icon_mode: bool = False) -> List[List[Union[PieceIcons, PieceNames, str]]]:
         moves = []
         for i in range(len(self.cells)):
             row = self.cells[i]
             for j in range(len(row)):
+                target_cell: Cell
                 target_cell = row[j]
                 if target_cell.piece and target_cell.piece.color == color:
-                    moves += self.highlight_moves(target_cell)
+                    move = self.highlight_moves(target_cell)
+                    if move:
+                        if icon_mode:
+                            moves.append([target_cell.piece.icon, move])
+                        else:
+                            moves.append([target_cell.piece.name, move])
         return moves
     
     def __add_pawns(self) -> None:
@@ -221,14 +229,18 @@ class Board:
         self.__add_queens()
         self.__add_kings()
         
-    def get_pieces(self, name: PieceNames, color: Colors) -> List[Cell]:
+    def get_pieces(self, name: PieceNames, color: Colors, icon: PieceIcons = None) -> List[Cell]:
         piece_list = []
         for i in range(len(self.cells)):
             row = self.cells[i]
             for j in range(len(row)):
                 check_cell = row[j]
-                if (check_cell.piece and check_cell.piece.color == color and check_cell.piece.name == name):
-                    piece_list.append(check_cell)
+                if not icon:
+                    if (check_cell.piece and check_cell.piece.color == color and check_cell.piece.name == name):
+                        piece_list.append(check_cell)
+                else:
+                    if (check_cell.piece and check_cell.piece.color == color and check_cell.piece.icon == icon):
+                        piece_list.append(check_cell)
         return piece_list
     
     def king_is_under_check(self, color: Colors) -> List:

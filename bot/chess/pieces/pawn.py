@@ -1,4 +1,4 @@
-from chess.enums import Colors, PieceIcons, PieceNames
+from bot.chess.enums import Colors, PieceIcons, PieceNames
 from .piece import Piece
 from .queen import Queen
 

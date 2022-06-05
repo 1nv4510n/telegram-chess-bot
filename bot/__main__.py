@@ -14,7 +14,7 @@ from .commands import set_commands
 from .db.base import Base
 from .middlewares.db_middleware import DbSessionMiddleware
 
-from .handlers.users import default
+from .handlers.users import default, chess
 
 
 async def main():
@@ -27,8 +27,8 @@ async def main():
 
     db_pool = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
     
-    # async with engine.begin() as conn:
-    #     await conn.run_sync(Base.metadata.create_all)
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
     
     bot = Bot(token=config.bot_token, parse_mode="HTML")
     
@@ -42,6 +42,7 @@ async def main():
     dp.message.middleware(DbSessionMiddleware(db_pool))
     
     dp.include_router(default.router)
+    dp.include_router(chess.router)
     
     await set_commands(bot)
     

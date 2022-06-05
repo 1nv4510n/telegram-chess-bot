@@ -14,12 +14,12 @@ class PieceNames(Enum):
     BISHOP = 'B'
     
 class PieceIcons(Enum):
-    KING = '♔'
-    KNIGHT = '♘'
-    PAWN = '♙'
-    QUEEN = '♕'
-    ROOK = '♖'
-    BISHOP = '♗'
+    KING = '♚'
+    KNIGHT = '♞'
+    PAWN = '♟'
+    QUEEN = '♛'
+    ROOK = '♜'
+    BISHOP = '♝'
     
 class BoardParam(Enum):
     BOARD_SIZE = 8

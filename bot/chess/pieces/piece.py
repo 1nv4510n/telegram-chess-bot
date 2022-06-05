@@ -1,4 +1,4 @@
-from chess.enums import Colors, PieceNames
+from bot.chess.enums import Colors, PieceNames
 
 class Piece:
     def __init__(self, color: Colors, cell) -> None:

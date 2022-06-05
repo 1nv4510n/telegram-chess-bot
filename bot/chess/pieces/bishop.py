@@ -1,4 +1,4 @@
-from chess.enums import Colors, PieceNames, PieceIcons
+from bot.chess.enums import Colors, PieceNames, PieceIcons
 from .piece import Piece
 
 black_logo = 'logo\\black_bishop.png'
