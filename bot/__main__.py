@@ -1,4 +1,3 @@
-import asyncio
 import logging
 
 from aiogram import Bot, Dispatcher
@@ -14,7 +13,7 @@ from .commands import set_commands
 from .db.base import Base
 from .middlewares.db_middleware import DbSessionMiddleware
 
-from .handlers.users import default, search_game
+from .handlers.users import default, search_game, chess
 
 
 async def main():
@@ -43,10 +42,11 @@ async def main():
     
     dp.include_router(default.router)
     dp.include_router(search_game.router)
+    dp.include_router(chess.router)
     
     await set_commands(bot)
     
     try:
-        await dp.start_polling(bot)
+        await dp.start_polling(bot, polling_timeout=60)
     finally:
         await bot.session.close()

@@ -1,10 +1,11 @@
 from typing import List
 from uuid import UUID
 
-from bot.chess.enums import PieceIcons, PieceNames
+from bot.chess.enums import PieceIcons, PieceNames, Colors
 
 from .board import Board, Cell
 from .player import Player
+from .draw import draw_board
 
 
 class Game:
@@ -17,7 +18,11 @@ class Game:
         self.board.add_pieces()
         
         self.is_gameover = False
-        
+    
+    async def get_board_image(self, player: Player) -> bytes:
+        turn_over = False if player.color == Colors.WHITE else True
+        return draw_board(self.board, turn_over)
+    
     async def get_active_pieces(self, player: Player) -> List[str]:
         active_pieces: List[str] = []
         

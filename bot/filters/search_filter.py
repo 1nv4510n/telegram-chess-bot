@@ -16,3 +16,16 @@ class UserSearchingFilter(BaseFilter):
         else:
             await message.answer("Please stop search: /stop")
             return False
+        
+class UserPlayingFilter(BaseFilter):
+    playing: bool
+    
+    async def __call__(self, message: Message, state: FSMContext) -> bool:
+        current_state = await state.get_state()
+        
+        is_user_playing = ((current_state is not None) and (current_state != ChessStates.searching.state))
+        
+        if is_user_playing == self.playing:
+            return True
+        else:
+            return False

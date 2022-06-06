@@ -1,17 +1,17 @@
 from aiogram import Router, F
 from aiogram.types import Message
+from aiogram.types.input_file import BufferedInputFile
 from aiogram.dispatcher.fsm.context import FSMContext
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.filters.search_filter import UserSearchingFilter
+from bot.filters.search_filter import UserSearchingFilter, UserPlayingFilter
 
-from bot.keyboards.kb_default import make_menu_keyboard
 from bot.db.requests import add_user
-from bot.states import ChessStates
+from bot.keyboards.kb_default import make_menu_keyboard
 
 router = Router()
 
-@router.message(UserSearchingFilter(searching=False), commands=['start'])
+@router.message(UserSearchingFilter(searching=False), UserPlayingFilter(playing=False), commands=['start'])
 async def command_start(message: Message, session: AsyncSession):
     await add_user(session, message.chat.id)
     await message.answer("Let's play chess!", reply_markup=make_menu_keyboard())
