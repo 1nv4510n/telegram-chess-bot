@@ -7,8 +7,11 @@ async def set_commands(bot: Bot):
         (
             [
                 BotCommand(command="start", description="Play chess!"),
-                BotCommand(command="help", description="How to play chess?"),
-                BotCommand(command="stats", description="Your personal statistics.")
+                BotCommand(command="new_game", description="Search game"),
+                BotCommand(command="stop", description="Stop search"),
+                BotCommand(command="stats", description="Your personal statistics."),
+                BotCommand(command="top", description="Show leaderboard"),
+                BotCommand(command="help", description="How to play chess?")
             ],
             BotCommandScopeAllPrivateChats(),
             None

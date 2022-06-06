@@ -8,7 +8,7 @@ from .player import Player
 
 
 class Game:
-    def __init__(self, game_id: UUID, player1: Player, player2: Player) -> None:
+    def __init__(self, game_id: str, player1: Player, player2: Player) -> None:
         self.game_id = game_id
         self.player1 = player1
         self.player2 = player2

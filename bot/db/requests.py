@@ -22,7 +22,7 @@ async def is_user_exists(session: AsyncSession, telegram_id: int) -> bool:
     )
     return request.scalars().first() is not None
 
-async def get_searching_users(session: AsyncSession) -> List[int]:
+async def get_searching_users(session: AsyncSession) -> List[PlayersEntry]:
     searching_data = await session.execute(
         select(PlayersEntry).where(PlayersEntry.searching == True)
     )

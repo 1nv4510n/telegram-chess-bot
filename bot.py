@@ -1,4 +1,5 @@
 import asyncio
+import random
 from time import time
 from uuid import uuid4
 from bot import __main__
@@ -6,7 +7,7 @@ from bot import chess
 from bot.chess.enums import Colors, PieceIcons, PieceNames
 from bot.chess.player import Player
 
-asyncio.run(__main__.main())
+#asyncio.run(__main__.main())
 
 # async def main():
 #     game_id = uuid4()
@@ -20,3 +21,5 @@ asyncio.run(__main__.main())
 # timer = time()
 # asyncio.run(main())
 # print(time() - timer)
+
+print(random.choice((Colors.BLACK, Colors.WHITE)))
