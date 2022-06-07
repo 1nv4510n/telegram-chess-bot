@@ -1,7 +1,5 @@
 from aiogram import Router, F
 from aiogram.types import Message
-from aiogram.types.input_file import BufferedInputFile
-from aiogram.dispatcher.fsm.context import FSMContext
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.filters.search_filter import UserSearchingFilter, UserPlayingFilter

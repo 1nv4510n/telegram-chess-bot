@@ -229,7 +229,7 @@ class Board:
         self.__add_queens()
         self.__add_kings()
         
-    def get_pieces(self, name: PieceNames, color: Colors, icon: PieceIcons = None) -> List[Cell]:
+    def get_pieces(self, name: PieceNames, color: Colors, icon: str = None) -> List[Cell]:
         piece_list = []
         for i in range(len(self.cells)):
             row = self.cells[i]
@@ -239,7 +239,7 @@ class Board:
                     if (check_cell.piece and check_cell.piece.color == color and check_cell.piece.name == name):
                         piece_list.append(check_cell)
                 else:
-                    if (check_cell.piece and check_cell.piece.color == color and check_cell.piece.icon == icon):
+                    if (check_cell.piece and check_cell.piece.color == color and check_cell.piece.icon.value == icon):
                         piece_list.append(check_cell)
         return piece_list
     
@@ -304,23 +304,3 @@ class Board:
         if self.king_is_under_check(color) == [] and self.get_all_moves(color) == []:
             return True
         return False
-        
-    #delete in future
-    def get_text_board(self, rotate_board: bool = False) -> str:
-        text_board: str = ''
-        if not rotate_board:
-            for i in range(8):
-                text_board += f'{i} ['
-                for j in range(8):
-                    text_board += f'{self.get_cell(j, i).cell_to_text()} '
-                text_board += ']\n'
-            text_board += 'X: 0  1  2  3  4  5  6  7'
-            return text_board
-        else:
-            for i in range(7, -1, -1):
-                text_board += f'{i} ['
-                for j in range(7, -1, -1):
-                    text_board += f'{self.get_cell(j, i).cell_to_text()} '
-                text_board += ']\n'
-            text_board += 'X: 0  1  2  3  4  5  6  7'
-            return text_board

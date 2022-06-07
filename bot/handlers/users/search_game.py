@@ -3,7 +3,7 @@ from aiogram import Bot, Router, F
 from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.dispatcher.fsm.storage.memory import MemoryStorage
 from aiogram.dispatcher.fsm.storage.base import StorageKey
-from aiogram.types import Message, BufferedInputFile
+from aiogram.types import Message
 
 from sqlalchemy.ext.asyncio.session import AsyncSession
 import random
@@ -57,7 +57,6 @@ async def new_game(message: Message, bot: Bot, fsm_storage: MemoryStorage, state
             game_id=game_id,
             color=random.choice((Colors.WHITE, Colors.BLACK))
         )
-        
         player1_key = StorageKey(bot.id, player1.id, player1.id)
         player1_state = ChessStates.select_icon if player1.color == Colors.WHITE else ChessStates.waiting_move
         
@@ -66,7 +65,6 @@ async def new_game(message: Message, bot: Bot, fsm_storage: MemoryStorage, state
             game_id=game_id,
             color=Colors.WHITE if player1.color == Colors.BLACK else Colors.BLACK
         )
-
         player2_state = ChessStates.select_icon if player2.color == Colors.WHITE else ChessStates.waiting_move
         
         game = Game(

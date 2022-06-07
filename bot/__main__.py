@@ -11,7 +11,7 @@ from .config import config
 from .commands import set_commands
 
 from .db.base import Base
-from .middlewares.db_middleware import DbSessionMiddleware
+from .middlewares import DbSessionMiddleware
 
 from .handlers.users import default, search_game, chess
 
