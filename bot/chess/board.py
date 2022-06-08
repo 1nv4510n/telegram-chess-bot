@@ -124,7 +124,6 @@ class Cell:
                             return True
                     else:
                         if target_cell.piece.can_move(self):
-                            print(f'{target_cell.cell_to_text()} CAN MOVE TO {self.to_pgn()}')
                             return True
         return False
 

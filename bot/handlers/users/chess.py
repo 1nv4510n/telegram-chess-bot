@@ -19,6 +19,19 @@ from bot.chess import Game, Player
 
 router = Router()
 
+####### TEST #######
+@router.message(ValidTurnFilter(), F.text == 'is under check')
+async def under_check_test(message: Message, state: FSMContext) -> None:
+    current_data = await state.get_data()
+    current_game: Game = current_data['game']
+    current_player: Player = current_data['player']
+    is_check = current_game.board.king_escape_moves(current_player.color)
+    
+    if is_check:
+        await message.answer('CHECK')
+        
+####################
+
 @router.message(UserPlayingFilter(playing=True), F.text == 'Resign')
 @router.message(UserPlayingFilter(playing=True), commands=['resign'])
 async def resign_game_handler(message: Message, bot: Bot, fsm_storage: MemoryStorage, state: FSMContext, session: AsyncSession) -> None:
@@ -149,4 +162,51 @@ async def under_check_handler(message: Message, state: FSMContext) -> None:
     
 @router.message(ValidTurnFilter(), ChessStates.check_escape_move)
 async def check_escape_move_handler(message: Message, bot: Bot, fsm_storage: MemoryStorage, state: FSMContext) -> None:
+    current_data = await state.get_data()
+    if message.text not in current_data['escape_moves']:
+        await message.answer('<b>INVALID TARGET</b>\nPlease, select an target from the buttons.')
+        return
+    current_game: Game = current_data['game']
+    enemy_id: int = current_data['enemy_id']
+    move = message.text
     
+    select_cell = move.split('-')[0]
+    target_cell = move.split('-')[1]
+    
+    current_game.current_turn.status = None
+    current_board = await current_game.move_piece(select_cell, target_cell)
+    await message.answer_photo(photo=BufferedInputFile(current_board, 'board.jpg'))
+    await message.answer(
+        f"""Your move: <b>{move}</b>\n\n{html.italic("Waiting for opponent's move...")}""", 
+        reply_markup=ReplyKeyboardRemove()
+        )
+    await state.set_state(ChessStates.waiting_move)
+    await state.update_data(escape_moves={})
+    await asyncio.sleep(0.5)
+    
+    enemy_key = StorageKey(bot.id, enemy_id, enemy_id)
+    enemy_data = await fsm_storage.get_data(bot, enemy_key)
+    enemy_player = enemy_data['player']
+    enemy_board = await current_game.get_board_image(enemy_player)
+    
+    await bot.send_photo(enemy_id, BufferedInputFile(enemy_board, 'board.jpg'), disable_notification=False)
+    
+    if not current_game.current_turn.status == ChessStatus.CHECK:
+        enemy_icons = await current_game.get_active_pieces()
+
+        await bot.send_message(
+            enemy_id, 
+            f"Opponent's move: <b>{move}</b>\n\n<b>Now it's your turn.</b>",
+            reply_markup=make_icons_keyboard(enemy_icons)
+            )
+        await fsm_storage.set_state(bot, enemy_key, ChessStates.select_icon)
+        await fsm_storage.update_data(bot, enemy_key, {'icons' : [icon.value for icon in enemy_icons]})
+    else:
+        enemy_icons = await current_game.get_check_icons()
+        await bot.send_message(
+            enemy_id, 
+            f"Opponent's move: <b>{move}</b>\n\n<b>!!! CHECK !!!</b>",
+            reply_markup=make_icons_keyboard(enemy_icons)
+            )
+        await fsm_storage.set_state(bot, enemy_key, ChessStates.under_check)
+        await fsm_storage.update_data(bot, enemy_key, {'icons': [icon.value for icon in enemy_icons]})
