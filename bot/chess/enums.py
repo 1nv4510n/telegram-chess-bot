@@ -21,6 +21,14 @@ class PieceIcons(Enum):
     ROOK = '♜'
     BISHOP = '♝'
     
+class ChessStatus(Enum):
+    CHECK = 'check'
+    CHECKMATE = 'checkmate'
+    STALEMATE = 'stalemate'
+    DRAW = 'draw'
+    WIN = 'win'
+    LOSE = 'lose'
+    
 class BoardParam(Enum):
     BOARD_SIZE = 8
     CELL_SIZE = 80

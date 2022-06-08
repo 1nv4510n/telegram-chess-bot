@@ -9,7 +9,6 @@ async def set_commands(bot: Bot):
                 BotCommand(command="start", description="Play chess!"),
                 BotCommand(command="new_game", description="Search game"),
                 BotCommand(command="resign", description="Resign the game"),
-                BotCommand(command="stop", description="Stop search"),
                 BotCommand(command="stats", description="Your personal statistics."),
                 BotCommand(command="top", description="Show leaderboard"),
                 BotCommand(command="help", description="How to play chess?")

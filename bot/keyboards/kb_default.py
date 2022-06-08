@@ -1,5 +1,5 @@
-from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
-from aiogram.utils.keyboard import ReplyKeyboardBuilder
+from aiogram.types import KeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
+from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
 def make_menu_keyboard() -> ReplyKeyboardMarkup:
     keyboard = ReplyKeyboardBuilder()
@@ -8,7 +8,7 @@ def make_menu_keyboard() -> ReplyKeyboardMarkup:
     keyboard.row(KeyboardButton(text='Help'))
     return keyboard.as_markup(resize_keyboard=True)
 
-def make_searching_keyboard() -> ReplyKeyboardMarkup:
-    keyboard = ReplyKeyboardBuilder()
-    keyboard.button(text='Stop search')
-    return keyboard.as_markup(resize_keyboard=True)
+def make_searching_keyboard() -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardBuilder()
+    keyboard.button(text='Stop search', callback_data='stop_search')
+    return keyboard.as_markup()

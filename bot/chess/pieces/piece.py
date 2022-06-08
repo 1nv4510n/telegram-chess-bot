@@ -38,7 +38,7 @@ class Piece:
                 for rook in enemy_rooks:
                     if self.cell.is_empty_vertical(rook):
                         return False
-                    
+                     
             if my_king.is_empty_diagonal(self.cell):
                 for queen in enemy_queen:
                     if self.cell.is_empty_diagonal(queen):
@@ -53,7 +53,10 @@ class Piece:
             row = self.cell.board.cells[i]
             for j in range(len(row)):
                 check_cell = row[j]
-                if check_cell.piece and check_cell.piece.color == self.color and check_cell.piece.name != PieceNames.KING:
+                if (check_cell.piece 
+                    and check_cell.piece.color == self.color 
+                    and check_cell.piece.name != PieceNames.KING 
+                    and check_cell != self.cell):
                     if check_cell.piece.can_move(self.cell, support_check = True):
                         return True
         return False

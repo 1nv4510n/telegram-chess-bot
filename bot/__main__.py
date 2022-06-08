@@ -39,6 +39,7 @@ async def main():
     dp.message.filter(F.chat.type == 'private')
     
     dp.message.middleware(DbSessionMiddleware(db_pool))
+    dp.callback_query.middleware(DbSessionMiddleware(db_pool))
     
     dp.include_router(default.router)
     dp.include_router(search_game.router)

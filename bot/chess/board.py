@@ -124,6 +124,7 @@ class Cell:
                             return True
                     else:
                         if target_cell.piece.can_move(self):
+                            print(f'{target_cell.cell_to_text()} CAN MOVE TO {self.to_pgn()}')
                             return True
         return False
 
@@ -243,7 +244,7 @@ class Board:
                         piece_list.append(check_cell)
         return piece_list
     
-    def king_is_under_check(self, color: Colors) -> List:
+    def king_is_under_check(self, color: Colors) -> List[Cell]:
         check_pieces = []
         king = self.get_pieces(PieceNames.KING, color)[0]
         for i in range(len(self.cells)):
@@ -267,7 +268,8 @@ class Board:
             escape_moves = []
             king_moves = self.highlight_moves(king)
             if king_moves:
-                escape_moves.append([king.piece.name, king_moves])
+                king_moves.insert(0, king)
+                escape_moves.append(king_moves)
             if len(check_source) == 1:
                 attack_lines = []    
                 for attacker in check_source:

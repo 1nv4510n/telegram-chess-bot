@@ -1,15 +1,18 @@
-from typing import List
+from typing import List, Union
 
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 from bot.chess.enums import PieceIcons
 
-def make_pieces_keyboard(pieces: List[str]) -> ReplyKeyboardMarkup:
+def make_icons_keyboard(icons: List[Union[PieceIcons, str]], string_mode: bool = False) -> ReplyKeyboardMarkup:
     keyboard = ReplyKeyboardBuilder()
     
-    for piece in pieces:
-        keyboard.add(KeyboardButton(text=piece.value))
+    for piece in icons:
+        if not string_mode:
+            keyboard.add(KeyboardButton(text=piece.value))
+        else:
+            keyboard.add(KeyboardButton(text=piece))
         
     keyboard.row(KeyboardButton(text='Resign'))
     
