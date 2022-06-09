@@ -1,4 +1,6 @@
 from typing import List, Optional, Union
+from typing_extensions import Self
+from copy import deepcopy
 from .pieces import *
 from .enums import Colors, PieceIcons, PieceNames
 
@@ -140,11 +142,11 @@ class Board:
                     row.append(Cell(self, j, i, Colors.WHITE, None))
             self.cells.append(row)
              
-    def get_copy(self) -> None:
+    def get_copy(self) -> Self:
         new_board = Board()
-        new_board.cells = self.cells
-        return new_board
-        
+        new_board.cells = deepcopy(self.cells)
+        return new_board                
+
     def get_cell(self, x: int, y: int) -> Cell:
         return self.cells[y][x]
     
