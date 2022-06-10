@@ -13,39 +13,72 @@ class Piece:
         if not support_check:
             if cell_target.piece and cell_target.piece.color == self.color:
                 return False
-
-        my_king = self.cell.board.get_pieces(PieceNames.KING, self.color)[0]
-
-        if self.name != PieceNames.KING and not support_check:
-            opposite_color = Colors.BLACK if self.color == Colors.WHITE else Colors.WHITE
+        if self.name != PieceNames.KING:    
+            my_king = self.cell.board.get_pieces(PieceNames.KING, self.color)[0]    
             
+            opposite_color = Colors.BLACK if self.color == Colors.WHITE else Colors.WHITE
+
             enemy_bishops = self.cell.board.get_pieces(PieceNames.BISHOP, opposite_color)
             enemy_rooks = self.cell.board.get_pieces(PieceNames.ROOK, opposite_color)
             enemy_queen = self.cell.board.get_pieces(PieceNames.QUEEN, opposite_color)
-            
-            if (my_king.is_empty_horizontal(self.cell)):
+
+            if (self.cell.is_empty_horizontal(my_king)):
                 for queen in enemy_queen:
                     if self.cell.is_empty_horizontal(queen):
-                        return False   
+                        if (self.name == PieceNames.QUEEN or self.name == PieceNames.ROOK) and cell_target.to_pgn() not in self.cell.get_path_to_cell(queen):
+                            return False                      
+                        return False
+                        
                 for rook in enemy_rooks:
                     if (self.cell.is_empty_horizontal(rook)):
-                        return False 
+                        if (self.name == PieceNames.QUEEN or self.name == PieceNames.ROOK) and cell_target.to_pgn() not in self.cell.get_path_to_cell(rook):
+                            return False
+                        return False
                     
-            if my_king.is_empty_vertical(self.cell):
+            if self.cell.is_empty_vertical(my_king):
                 for queen in enemy_queen:
                     if self.cell.is_empty_vertical(queen):
-                        return False
+                        if (self.name == PieceNames.QUEEN or self.name == PieceNames.ROOK) and cell_target.to_pgn() not in self.cell.get_path_to_cell(queen):
+                            return False
+                        if self.name == PieceNames.PAWN:
+                            if cell_target.to_pgn() in self.get_attack_direction():
+                                return False                        
+                        else:
+                            return False
                 for rook in enemy_rooks:
                     if self.cell.is_empty_vertical(rook):
-                        return False
-                     
-            if my_king.is_empty_diagonal(self.cell):
+                        if (self.name == PieceNames.QUEEN or self.name == PieceNames.ROOK) and cell_target.to_pgn() not in self.cell.get_path_to_cell(rook):
+                            return False
+                        if self.name == PieceNames.PAWN:
+                            if cell_target.to_pgn() in self.get_attack_direction():
+                                return False                        
+                        else:
+                            return False
+                        
+            if self.cell.is_empty_diagonal(my_king):
                 for queen in enemy_queen:
                     if self.cell.is_empty_diagonal(queen):
-                        return False
+                        if (self.name == PieceNames.QUEEN or self.name == PieceNames.BISHOP) and cell_target.to_pgn() not in self.cell.get_path_to_cell(queen):
+                            return False
+                        if self.name == PieceNames.PAWN:
+                            if cell_target == queen and queen.to_pgn() in self.get_attack_direction():
+                                return True
+                            else:
+                                return False
+                        else:
+                            return False
                 for bishop in enemy_bishops:
                     if self.cell.is_empty_diagonal(bishop):
-                        return False     
+                        if (self.name == PieceNames.QUEEN or self.name == PieceNames.BISHOP) and cell_target.to_pgn() not in self.cell.get_path_to_cell(bishop):
+                            return False
+                        if self.name == PieceNames.PAWN:
+                            if cell_target == bishop and bishop.to_pgn() in self.get_attack_direction():
+                                return True
+                            else:
+                                return False
+                        else:
+                            return False
+
         return True
     
     def is_supported(self) -> bool:
@@ -66,3 +99,33 @@ class Piece:
     
     def move_piece(self) -> None:
         pass
+    
+# opposite_color = Colors.BLACK if self.color == Colors.WHITE else Colors.WHITE
+
+# enemy_bishops = self.cell.board.get_pieces(PieceNames.BISHOP, opposite_color)
+# enemy_rooks = self.cell.board.get_pieces(PieceNames.ROOK, opposite_color)
+# enemy_queen = self.cell.board.get_pieces(PieceNames.QUEEN, opposite_color)
+
+# if (my_king.is_empty_horizontal(self.cell)):
+#     for queen in enemy_queen:
+#         if self.cell.is_empty_horizontal(queen):
+#             return False   
+#     for rook in enemy_rooks:
+#         if (self.cell.is_empty_horizontal(rook)):
+#             return False 
+        
+# if my_king.is_empty_vertical(self.cell):
+#     for queen in enemy_queen:
+#         if self.cell.is_empty_vertical(queen):
+#             return False
+#     for rook in enemy_rooks:
+#         if self.cell.is_empty_vertical(rook):
+#             return False
+            
+# if my_king.is_empty_diagonal(self.cell):
+#     for queen in enemy_queen:
+#         if self.cell.is_empty_diagonal(queen):
+#             return False
+#     for bishop in enemy_bishops:
+#         if self.cell.is_empty_diagonal(bishop):
+#             return False

@@ -1,3 +1,4 @@
+import re
 from typing import List, Optional, Union
 from typing_extensions import Self
 from copy import deepcopy
@@ -76,7 +77,7 @@ class Cell:
         
         return True
     
-    def get_path_to_cell(self, target_cell) -> list:
+    def get_path_to_cell(self, target_cell) -> List[str]:
         path = []
         
         absX = abs(target_cell.x - self.x)
@@ -85,18 +86,18 @@ class Cell:
         if (self.x == target_cell.x):
             min_y_value = min(self.y, target_cell.y)
             max_y_value = max(self.y, target_cell.y)
-            for y in range(min_y_value + 1, max_y_value + 1):
+            for y in range(min_y_value, max_y_value + 1):
                 path.append(self.board.get_cell(self.x, y).to_pgn())
         elif (self.y == target_cell.y):
             min_x_value = min(self.x, target_cell.x)
             max_x_value = max(self.x, target_cell.x)
-            for x in range(min_x_value + 1, max_x_value + 1):
+            for x in range(min_x_value, max_x_value + 1):
                 path.append(self.board.get_cell(x, self.y).to_pgn())
         elif (absX == absY): 
             dy = 1 if self.y < target_cell.y else -1
             dx = 1 if self.x < target_cell.x else -1
             
-            for i in range(1, absY + 1):
+            for i in range(absY + 1):
                 path.append(self.board.get_cell(self.x + dx * i, self.y + dy * i).to_pgn())
         
         return path
@@ -116,17 +117,28 @@ class Cell:
         for i in range(len(self.board.cells)):
             row = self.board.cells[i]
             for j in range(len(row)):
-                target_cell = row[j]
-                if target_cell.piece and target_cell.piece.color == opposite_color:
-                    if target_cell.piece.name == PieceNames.KING:
-                        if self.to_pgn() in target_cell.piece.get_attack_direction():
+                check_cell = row[j]
+                if check_cell.piece and check_cell.piece.color == opposite_color:
+                    if check_cell.piece.name == PieceNames.KNIGHT:
+                        dx = abs(check_cell.x - self.x)
+                        dy = abs(check_cell.y - self.y)
+                        if (dx == 1 and dy == 2) or (dx == 2 and dy == 1):
                             return True
-                    elif target_cell.piece.name == PieceNames.PAWN:
-                        if self.to_pgn() in target_cell.piece.get_attack_direction():
+                    if check_cell.piece.name == PieceNames.PAWN and self.to_pgn() in check_cell.piece.get_attack_direction():
                             return True
-                    else:
-                        if target_cell.piece.can_move(self):
-                            return True
+                    if (check_cell.piece.name == PieceNames.QUEEN 
+                            and (self.is_empty_diagonal(check_cell) 
+                            or self.is_empty_horizontal(check_cell) 
+                            or self.is_empty_vertical(check_cell))):
+                        return True
+                    if (check_cell.piece.name == PieceNames.ROOK 
+                            and (self.is_empty_horizontal(check_cell) 
+                            or self.is_empty_vertical(check_cell))):
+                        return True
+                    if check_cell.piece.name == PieceNames.BISHOP and self.is_empty_diagonal(check_cell):
+                        return True
+                    if check_cell.piece.name == PieceNames.KING and self.to_pgn() in check_cell.piece.get_attack_direction():
+                        return True
         return False
 
 class Board:
@@ -248,21 +260,54 @@ class Board:
     def king_is_under_check(self, color: Colors) -> List[Cell]:
         check_pieces = []
         king = self.get_pieces(PieceNames.KING, color)[0]
+        # for i in range(len(self.cells)):
+        #     row = self.cells[i]
+        #     for j in range(len(row)):
+        #         check_cell = row[j]
+        #         if (check_cell.piece):
+        #             if (check_cell.piece.color != color and (check_cell.piece.name != PieceNames.KING)):
+        #                 if (check_cell.piece.name == PieceNames.PAWN):
+        #                     if (king.to_pgn() in check_cell.piece.get_attack_direction()):
+        #                         check_pieces.append(check_cell)
+        #                 elif (king.to_pgn() in check_cell.board.highlight_moves(check_cell)):
+        #                     check_pieces.append(check_cell)
+                            
+        opposite_color = Colors.BLACK if color == Colors.WHITE else Colors.WHITE
+            
         for i in range(len(self.cells)):
             row = self.cells[i]
             for j in range(len(row)):
                 check_cell = row[j]
-                if (check_cell.piece):
-                    if (check_cell.piece.color != color and (check_cell.piece.name != PieceNames.KING)):
-                        if (check_cell.piece.name == PieceNames.PAWN):
-                            if (king.to_pgn() in check_cell.piece.get_attack_direction()):
-                                check_pieces.append(check_cell)
-                        elif (king.to_pgn() in check_cell.board.highlight_moves(check_cell)):
+                if check_cell.piece and check_cell.piece.color == opposite_color:
+                    if check_cell.piece.name == PieceNames.KNIGHT:
+                        dx = abs(check_cell.x - king.x)
+                        dy = abs(check_cell.y - king.y)
+                        if (dx == 1 and dy == 2) or (dx == 2 and dy == 1):
                             check_pieces.append(check_cell)
-                            
+                            continue
+                    if check_cell.piece.name == PieceNames.PAWN:
+                        if king.to_pgn() in check_cell.piece.get_attack_direction():
+                            check_pieces.append(check_cell)
+                            continue
+                    if check_cell.piece.name == PieceNames.QUEEN:
+                        if (king.is_empty_diagonal(check_cell) 
+                            or king.is_empty_horizontal(check_cell) 
+                            or king.is_empty_vertical(check_cell)):
+                            check_pieces.append(check_cell)
+                            continue
+                    if check_cell.piece.name == PieceNames.ROOK:
+                        if (king.is_empty_horizontal(check_cell) 
+                            or king.is_empty_vertical(check_cell)):
+                            check_pieces.append(check_cell)
+                            continue
+                    if check_cell.piece.name == PieceNames.BISHOP:
+                        if king.is_empty_diagonal(check_cell):
+                            check_pieces.append(check_cell)
+           
         return check_pieces
     
     def king_escape_moves(self, color: Colors) -> List[List[Union[Cell, str]]]:
+        print('STARTED CHEK ESCAPE MOVES')
         king = self.get_pieces(PieceNames.KING, color)[0]
         check_source = self.king_is_under_check(color)
         if check_source:
@@ -274,12 +319,11 @@ class Board:
             if len(check_source) == 1:
                 attack_lines = []    
                 for attacker in check_source:
-                    if attacker.piece.name == PieceNames.KNIGHT:
-                        attack_lines.append(attacker.to_pgn())
-                    elif attacker.piece.name == PieceNames.PAWN:
-                        attack_lines.append(attacker.to_pgn())
-                    else:
-                        attack_lines += king.get_path_to_cell(attacker)
+                    if attacker.piece.name != PieceNames.KING:
+                        if attacker.piece.name == PieceNames.PAWN or attacker.piece.name == PieceNames.KNIGHT:
+                            attack_lines.append(attacker.to_pgn())
+                        else:
+                            attack_lines += king.get_path_to_cell(attacker)
                 
                 for i in range(len(self.cells)):
                     row = self.cells[i]

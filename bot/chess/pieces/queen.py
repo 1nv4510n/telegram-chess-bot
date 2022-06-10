@@ -14,6 +14,7 @@ class Queen(Piece):
     def can_move(self, target_cell, support_check = False) -> bool:
         if (not super().can_move(target_cell, support_check)):
             return False
+
         if (self.cell.is_empty_vertical(target_cell)):
             return True
         if (self.cell.is_empty_horizontal(target_cell)):
