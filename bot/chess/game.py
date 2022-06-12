@@ -34,8 +34,9 @@ class Game:
         
         self.current_turn: Player = player1 if player1.color == Colors.WHITE else player2
         
-        self.is_gameover = False
-    
+        self.is_gameover: bool = False
+        self.end_game_status: ChessStatus = None
+            
     async def get_board_image(self, player: Player) -> bytes:
         turn_over = False if player.color == Colors.WHITE else True
         return draw_board(self.board, turn_over)
@@ -96,10 +97,23 @@ class Game:
         piece_cell.move_piece(target_cell)
         
         current_board = await self.get_board_image(self.current_turn)
+        previous_turn = self.current_turn
         self.current_turn = self.player1 if self.current_turn == self.player2 else self.player2
         
         if self.board.king_is_under_check(self.current_turn.color):
             self.current_turn.status = ChessStatus.CHECK
+            
+            if self.board.is_checkmate(self.current_turn.color):
+                self.is_gameover = True
+                self.current_turn.status = ChessStatus.LOSE
+                previous_turn.status = ChessStatus.WIN
+                self.end_game_status = ChessStatus.CHECKMATE
+                
+        if self.board.is_stalemate(self.current_turn.color):
+            self.is_gameover = True
+            self.current_turn.status = ChessStatus.DRAW
+            previous_turn.status = ChessStatus.DRAW
+            self.end_game_status = ChessStatus.STALEMATE
         
         return current_board
             

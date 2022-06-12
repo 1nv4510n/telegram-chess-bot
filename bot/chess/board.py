@@ -13,7 +13,7 @@ class Cell:
         self.piece: Piece = piece
         self.board: Board = board
         
-    #delete in future
+    #delete in future 
     def cell_to_text(self) -> str:
         if (not self.piece):
             return None
@@ -26,12 +26,9 @@ class Cell:
         vertical = '12345678'
         return f'{horizontal[size - self.x]}{vertical[size - self.y]}'
         
-    def is_empty(self) -> bool:
-        if (self.piece):
-            if (self.piece.name == PieceNames.KING):
-                opposite_color = Colors.BLACK if self.piece.color == Colors.WHITE else Colors.WHITE
-                if (self.piece.color == opposite_color):
-                    return True
+    def is_empty(self, invisible_king: Colors = None) -> bool:
+        if invisible_king and self.piece and self.piece.color == invisible_king and self.piece.name == PieceNames.KING:
+            return True
         return self.piece == None
     
     def is_enemy(self, target_cell) -> bool:
@@ -39,29 +36,29 @@ class Cell:
             return self.piece.color != target_cell.piece.color
         return False
     
-    def is_empty_vertical(self, target_cell) -> bool:
+    def is_empty_vertical(self, target_cell, invisible_king: Colors = None) -> bool:
         if (self.x != target_cell.x):
             return False
         
         min_value = min(self.y, target_cell.y)
         max_value = max(self.y, target_cell.y)
         for y in range(min_value + 1, max_value):
-            if (not self.board.get_cell(self.x, y).is_empty()):
+            if (not self.board.get_cell(self.x, y).is_empty(invisible_king)):
                 return False
         return True
     
-    def is_empty_horizontal(self, target_cell) -> bool:
+    def is_empty_horizontal(self, target_cell, invisible_king: Colors = None) -> bool:
         if (self.y != target_cell.y):
             return False
         
         min_value = min(self.x, target_cell.x)
         max_value = max(self.x, target_cell.x)
         for x in range(min_value + 1, max_value):
-            if (not self.board.get_cell(x, self.y).is_empty()):
+            if (not self.board.get_cell(x, self.y).is_empty(invisible_king)):
                 return False
         return True
     
-    def is_empty_diagonal(self, target_cell) -> bool:
+    def is_empty_diagonal(self, target_cell, invisible_king: Colors = None) -> bool:
         absX = abs(target_cell.x - self.x)
         absY = abs(target_cell.y - self.y)
         
@@ -72,7 +69,7 @@ class Cell:
         dx = 1 if self.x < target_cell.x else -1
         
         for i in range(1, absY):
-            if (not self.board.get_cell(self.x + dx * i, self.y + dy * i).is_empty()):
+            if (not self.board.get_cell(self.x + dx * i, self.y + dy * i).is_empty(invisible_king)):
                 return False
         
         return True
@@ -114,11 +111,12 @@ class Cell:
                 target_cell.piece.move_piece()
                 
     def is_attacked(self, opposite_color: Colors) -> bool:
+        my_color = Colors.WHITE if opposite_color == Colors.BLACK else Colors.BLACK
         for i in range(len(self.board.cells)):
             row = self.board.cells[i]
             for j in range(len(row)):
                 check_cell = row[j]
-                if check_cell.piece and check_cell.piece.color == opposite_color:
+                if check_cell.piece and check_cell.piece.color == opposite_color and check_cell != self:
                     if check_cell.piece.name == PieceNames.KNIGHT:
                         dx = abs(check_cell.x - self.x)
                         dy = abs(check_cell.y - self.y)
@@ -127,15 +125,15 @@ class Cell:
                     if check_cell.piece.name == PieceNames.PAWN and self.to_pgn() in check_cell.piece.get_attack_direction():
                             return True
                     if (check_cell.piece.name == PieceNames.QUEEN 
-                            and (self.is_empty_diagonal(check_cell) 
-                            or self.is_empty_horizontal(check_cell) 
-                            or self.is_empty_vertical(check_cell))):
+                            and (self.is_empty_diagonal(check_cell, my_color) 
+                            or self.is_empty_horizontal(check_cell, my_color) 
+                            or self.is_empty_vertical(check_cell, my_color))):
                         return True
                     if (check_cell.piece.name == PieceNames.ROOK 
-                            and (self.is_empty_horizontal(check_cell) 
-                            or self.is_empty_vertical(check_cell))):
+                            and (self.is_empty_horizontal(check_cell, my_color) 
+                            or self.is_empty_vertical(check_cell, my_color))):
                         return True
-                    if check_cell.piece.name == PieceNames.BISHOP and self.is_empty_diagonal(check_cell):
+                    if check_cell.piece.name == PieceNames.BISHOP and self.is_empty_diagonal(check_cell, my_color):
                         return True
                     if check_cell.piece.name == PieceNames.KING and self.to_pgn() in check_cell.piece.get_attack_direction():
                         return True
@@ -307,7 +305,6 @@ class Board:
         return check_pieces
     
     def king_escape_moves(self, color: Colors) -> List[List[Union[Cell, str]]]:
-        print('STARTED CHEK ESCAPE MOVES')
         king = self.get_pieces(PieceNames.KING, color)[0]
         check_source = self.king_is_under_check(color)
         if check_source:
