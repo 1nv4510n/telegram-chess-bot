@@ -14,6 +14,4 @@ asyncio.run(__main__.main())
 # b = Board()
 # b.add_pieces()
 
-# b.get_cell_from_pgn('e2').move_piece(b.get_cell_from_pgn('e4'))
-# b.get_cell_from_pgn('f1').move_piece(b.get_cell_from_pgn('b5'))
-# print(b.get_cell_from_pgn('d4').is_empty_vertical(b.get_cell_from_pgn('d3')))
+# print(b.get_cell_from_pgn('d8').is_attacked(Colors.BLACK))

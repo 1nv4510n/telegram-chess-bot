@@ -29,6 +29,12 @@ async def get_searching_users(session: AsyncSession) -> List[PlayersEntry]:
     
     return searching_data.scalars().all()
 
+async def get_user_rating(session: AsyncSession, telegram_id: int) -> float:
+    user_rating = await session.execute(
+        select(PlayersEntry.rating).where(PlayersEntry.telegram_id == telegram_id)
+    )
+    return user_rating.scalar()
+
 #modify data methods
 
 async def update_user_data(session: AsyncSession, telegram_id: int,
@@ -41,14 +47,20 @@ async def update_user_data(session: AsyncSession, telegram_id: int,
     with suppress(IntegrityError):
         await session.commit()
 
-async def change_user_rating(session: AsyncSession, telegram_id: int, offset: int) -> None:
-    current_rating = await session.execute(
+async def change_user_rating(session: AsyncSession, telegram_id: int, offset: float) -> None:
+    await session.execute(
         update(PlayersEntry).where(PlayersEntry.telegram_id == telegram_id).values(
             rating=PlayersEntry.rating + offset
         )
     )
     with suppress(IntegrityError):
         await session.commit()
+        
+async def reset_users_table(session: AsyncSession) -> None:
+    await session.execute(
+        update(PlayersEntry).values(searching=False, playing=False, game_id = None)
+    )
+    await session.commit()
 
 async def add_user(session: AsyncSession, telegram_id: int) -> None:
     entry = PlayersEntry()

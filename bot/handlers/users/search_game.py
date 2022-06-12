@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio.session import AsyncSession
 import random
 from uuid import uuid4
 
-from bot.db.requests import update_user_data, get_searching_users
+from bot.db.requests import update_user_data, get_searching_users, get_user_rating
 from bot.keyboards.kb_default import make_searching_keyboard
 from bot.keyboards.kb_chess import make_icons_keyboard
 from bot.states import ChessStates
@@ -47,9 +47,11 @@ async def new_game(message: Message, bot: Bot, fsm_storage: MemoryStorage, state
     
     if len(searching_players) == 1:
         game_id = str(uuid4())
-        
+        random_id = random.choice(searching_players)
+    
         player1 = Player(
-            id=random.choice(searching_players),
+            id=random_id,
+            rating=await get_user_rating(session, random_id),
             game_id=game_id,
             color=random.choice((Colors.WHITE, Colors.BLACK)),
             status=None
@@ -57,6 +59,7 @@ async def new_game(message: Message, bot: Bot, fsm_storage: MemoryStorage, state
         
         player2 = Player(
             id=message.from_user.id,
+            rating=await get_user_rating(session, message.from_user.id),
             game_id=game_id,
             color=Colors.WHITE if player1.color == Colors.BLACK else Colors.BLACK,
             status=None

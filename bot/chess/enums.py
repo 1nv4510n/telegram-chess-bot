@@ -1,8 +1,8 @@
 from enum import Enum
 
 class Colors(Enum):
-    WHITE = 'w'
-    BLACK = 'b'
+    WHITE = 'WHITE'
+    BLACK = 'BLACK'
     
 class PieceNames(Enum):
     PIECE = 'Piece'
@@ -22,12 +22,13 @@ class PieceIcons(Enum):
     BISHOP = '♝'
     
 class ChessStatus(Enum):
-    CHECK = 'check'
-    CHECKMATE = 'checkmate'
-    STALEMATE = 'stalemate'
-    DRAW = 'draw'
-    WIN = 'win'
-    LOSE = 'lose'
+    CHECK = 'CHECK'
+    CHECKMATE = 'CHECKMATE'
+    STALEMATE = 'STALEMATE'
+    RESIGN = 'RESIGN'
+    DRAW = 'DRAW'
+    WIN = 'WIN'
+    LOSE = 'LOSE'
     
 class BoardParam(Enum):
     BOARD_SIZE = 8
