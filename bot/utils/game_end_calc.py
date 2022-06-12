@@ -7,11 +7,11 @@ from bot.chess.player import Player
 from bot.chess.enums import ChessStatus
 
 
-async def make_game_dict(game_id: UUID, opponent_name: str, color: str, result: str) -> Dict:
+async def make_game_dict(game_id: UUID, opponent_name: str, opponent_rating: float, result: str) -> Dict:
     game_dict = {
         'game_id' : game_id,
         'opponent_name' : opponent_name,
-        'color' : color,
+        'opponent_rating' : opponent_rating,
         'result' : result
     }
     return game_dict
@@ -27,8 +27,8 @@ def get_result_score(status: ChessStatus) -> float:
     if status == ChessStatus.LOSE: return 0
 
 async def change_user_ratings(session: AsyncSession, playerA: Player, playerB: Player) -> List[List[Union[float, int]]]:
-    expected_scoreA = lambda ratingA, ratingB: 1 / (1 + 10 ** ((ratingB - ratingA) / 400))
-    expected_scoreB = lambda ratingA, ratingB: 1 / (1 + 10 ** ((ratingA - ratingB) / 400))
+    expected_scoreA = lambda ratingA, ratingB: round(1 / (1 + 10 ** ((ratingB - ratingA) / 400)), 3)
+    expected_scoreB = lambda ratingA, ratingB: round(1 / (1 + 10 ** ((ratingA - ratingB) / 400)), 3)
     
     total_earnA: float = round(get_coefficient(playerA.rating) * (get_result_score(playerA.status) - expected_scoreA(playerA.rating, playerB.rating)), 2)
     total_earnB: float = round(get_coefficient(playerB.rating) * (get_result_score(playerB.status) - expected_scoreB(playerA.rating, playerB.rating)), 2)

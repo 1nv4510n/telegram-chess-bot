@@ -10,13 +10,14 @@ class GamesHistoryEntry(Base):
     game_id = Column(UUID)
     telegram_id = Column(BigInteger, nullable=False, index=True)
     opponent_name = Column(String, nullable=False)
-    color = Column(String, nullable=False)
+    opponent_rating = Column(Float, nullable=False)
     result = Column(String, nullable=False)
     
 class PlayersEntry(Base):
     __tablename__ = "players"
     
     telegram_id = Column(BigInteger, nullable=False, unique=True, primary_key=True)
+    name = Column(String, nullable=False)
     rating = Column(Float, nullable=False)
     searching = Column(Boolean, nullable=False)
     playing = Column(Boolean, nullable=False)

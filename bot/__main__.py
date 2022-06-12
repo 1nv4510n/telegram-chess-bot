@@ -13,7 +13,7 @@ from .db.requests import reset_users_table
 from .middlewares import DbSessionMiddleware
 from .utils import log
 
-from .handlers.users import default, search_game, chess
+from .handlers.users import default, search_game, chess, statistics, leaderboard
 
 async def main():
     engine = create_async_engine(config.postgres_dsn, future=True, echo=False)
@@ -39,7 +39,9 @@ async def main():
     dp.include_router(default.router)
     dp.include_router(search_game.router)
     dp.include_router(chess.router)
-    
+    dp.include_router(statistics.router)
+    dp.include_router(leaderboard.router)
+        
     await set_commands(bot)
     
     try:

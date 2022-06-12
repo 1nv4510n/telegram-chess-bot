@@ -39,12 +39,12 @@ async def resign_game_handler(message: Message, bot: Bot, fsm_storage: MemorySto
     ratings = await change_user_ratings(session, current_player, enemy_player)
     await log_game(
         session,
-        await make_game_dict(current_player.game_id, enemy_name, current_player.color.value, current_player.status.value),
+        await make_game_dict(current_player.game_id, enemy_name, enemy_player.rating, current_player.status.value),
         message.from_user.id
     )
     await log_game(
         session,
-        await make_game_dict(enemy_player.game_id, current_name, enemy_player.color.value, enemy_player.status.value),
+        await make_game_dict(enemy_player.game_id, current_name, current_player.rating, enemy_player.status.value),
         enemy_id
     )
     
@@ -203,12 +203,12 @@ async def select_target_handler(message: Message, bot: Bot, fsm_storage: MemoryS
         
         await log_game(
             session,
-            await make_game_dict(current_player.game_id, enemy_name, current_player.color.value, current_player.status.value),
+            await make_game_dict(current_player.game_id, enemy_name, enemy_player.rating, current_player.status.value),
             current_player.id
         )
         await log_game(
             session,
-            await make_game_dict(enemy_player.game_id, current_name, enemy_player.color.value, enemy_player.status.value),
+            await make_game_dict(enemy_player.game_id, current_name, current_player.rating, enemy_player.status.value),
             enemy_player.id
         )
         
@@ -242,7 +242,7 @@ async def check_escape_move_handler(message: Message, bot: Bot, fsm_storage: Mem
     enemy_id: int = current_data['enemy_id']
     enemy_key = StorageKey(bot.id, enemy_id, enemy_id)
     enemy_data = await fsm_storage.get_data(bot, enemy_key)
-    enemy_player = enemy_data['player']
+    enemy_player: Player = enemy_data['player']
 
     move = message.text
     
@@ -318,12 +318,12 @@ async def check_escape_move_handler(message: Message, bot: Bot, fsm_storage: Mem
         
         await log_game(
             session,
-            await make_game_dict(current_player.game_id, enemy_name, current_player.color.value, current_player.status.value),
+            await make_game_dict(current_player.game_id, enemy_name, enemy_player.rating, current_player.status.value),
             current_player.id
         )
         await log_game(
             session,
-            await make_game_dict(enemy_player.game_id, current_name, enemy_player.color.value, enemy_player.status.value),
+            await make_game_dict(enemy_player.game_id, current_name, current_player.rating, enemy_player.status.value),
             enemy_player.id
         )
         

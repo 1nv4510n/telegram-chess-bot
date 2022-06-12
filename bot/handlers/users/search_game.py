@@ -39,7 +39,7 @@ async def new_game(message: Message, bot: Bot, fsm_storage: MemoryStorage, state
     msg = await message.answer("<b>Searching game...</b>", reply_markup=make_searching_keyboard())
     
     await asyncio.sleep(30 / random.randint(10, 100))
-    await update_user_data(session, message.chat.id, searching=True, playing=False)
+    await update_user_data(session, message.chat.id, searching=True, playing=False, name=message.from_user.first_name)
     await state.set_state(ChessStates.searching)
     
     searching_players = [user.telegram_id for user in await get_searching_users(session)]
@@ -79,8 +79,7 @@ async def new_game(message: Message, bot: Bot, fsm_storage: MemoryStorage, state
             player1=player1,
             player2=player2
         )
-        
-        #player1
+
         await fsm_storage.set_data(bot, player1_key, 
             data={
                 'game' : game,
@@ -88,8 +87,7 @@ async def new_game(message: Message, bot: Bot, fsm_storage: MemoryStorage, state
                 'enemy_id' : player2.id
             }
         )
-         
-        #player2
+
         await state.set_data(
             data={
                 'game' : game,
@@ -98,7 +96,7 @@ async def new_game(message: Message, bot: Bot, fsm_storage: MemoryStorage, state
             }
         )
         
-        game_found_text = "<b>Game has been found!</b>\n\nYour opponent: <b>{name}</b>\n\nYour Color: <b>{color}</b>"
+        game_found_text = "<b>Game has been found!</b>\n\nYour opponent: <b>{name} ({rating})</b>\n\nYour Color: <b>{color}</b>"
         
         player1_chat = await bot.get_chat(player1.id)
         player1_name = player1_chat.first_name
@@ -114,10 +112,10 @@ async def new_game(message: Message, bot: Bot, fsm_storage: MemoryStorage, state
         await bot.send_photo(player1.id, board1)
         await asyncio.sleep(0.3)
         await bot.send_message(player1.id, 
-                               game_found_text.format(name=player2_name, color=player1.color.name),
+                               game_found_text.format(name=player2_name, rating=round(player2.rating), color=player1.color.name),
                                reply_markup=make_icons_keyboard(icons))
         
         await message.answer_photo(board2)
         await asyncio.sleep(0.3)
-        await message.answer(game_found_text.format(name=player1_name, color=player2.color.name),
+        await message.answer(game_found_text.format(name=player1_name, rating=round(player1.rating), color=player2.color.name),
                                reply_markup=make_icons_keyboard(icons))

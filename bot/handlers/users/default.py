@@ -12,10 +12,9 @@ router = Router()
 
 @router.message(UserSearchingFilter(searching=False), UserPlayingFilter(playing=False), commands=['start'])
 async def command_start(message: Message, session: AsyncSession):
-    await add_user(session, message.from_user.id)
+    await add_user(session, message.from_user.id, message.from_user.first_name)
     await message.answer("Let's play chess!", reply_markup=make_menu_keyboard())
     log.info(f"User '{message.from_user.first_name}' started bot!")
-
 
 @router.message(commands=['help'])
 @router.message(F.text.lower() == 'help')
