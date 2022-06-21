@@ -41,7 +41,7 @@ async def main():
     dp.include_router(chess.router)
     dp.include_router(statistics.router)
     dp.include_router(leaderboard.router)
-        
+
     await set_commands(bot)
     
     try:

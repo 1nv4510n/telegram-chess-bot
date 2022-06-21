@@ -12,6 +12,7 @@ from uuid import uuid4
 from bot.db.requests import update_user_data, get_searching_users, get_user_rating
 from bot.keyboards.kb_default import make_searching_keyboard
 from bot.keyboards.kb_chess import make_icons_keyboard
+from bot.utils.logging import log
 from bot.states import ChessStates
 
 from bot.chess.enums import Colors, PieceIcons
@@ -28,7 +29,7 @@ async def stop_search(call: CallbackQuery, state: FSMContext, session: AsyncSess
     await update_user_data(session, call.from_user.id, searching=False, playing=False)
     await state.clear()
     await call.message.edit_text('<b>Game search stopped.</b>')
-    
+
 @router.message(F.text == 'New game')
 @router.message(commands=['new_game'])
 async def new_game(message: Message, bot: Bot, fsm_storage: MemoryStorage, state: FSMContext, session: AsyncSession):
@@ -37,6 +38,10 @@ async def new_game(message: Message, bot: Bot, fsm_storage: MemoryStorage, state
         await message.answer("Can't start new game.\n<b>You are already playing/searching!</b>")
         return
     msg = await message.answer("<b>Searching game...</b>", reply_markup=make_searching_keyboard())
+    if message.from_user.username:
+        log.info(f'User @{message.from_user.username} ({message.from_user.first_name}) started search')
+    else:
+        log.info(f'User {message.from_user.first_name} started search')
     
     await asyncio.sleep(30 / random.randint(10, 100))
     await update_user_data(session, message.chat.id, searching=True, playing=False, name=message.from_user.first_name)

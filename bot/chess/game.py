@@ -18,19 +18,19 @@ class Game:
         self.board = Board()
         self.board.add_pieces()
         
-        #TEST###
-        self.board.get_cell_from_pgn('d2').piece = None
-        self.board.get_cell_from_pgn('e2').piece = None
-        self.board.get_cell_from_pgn('d7').piece = None
-        self.board.get_cell_from_pgn('e7').piece = None
-        self.board.get_cell_from_pgn('f2').piece = None
+        # #TEST###
+        # self.board.get_cell_from_pgn('d2').piece = None
+        # self.board.get_cell_from_pgn('e2').piece = None
+        # self.board.get_cell_from_pgn('d7').piece = None
+        # self.board.get_cell_from_pgn('e7').piece = None
+        # self.board.get_cell_from_pgn('f2').piece = None
         
-        self.board.get_cell_from_pgn('d8').move_piece(self.board.get_cell_from_pgn('d7'))
+        # self.board.get_cell_from_pgn('d8').move_piece(self.board.get_cell_from_pgn('d7'))
         
-        self.board.get_cell_from_pgn('e1').move_piece(self.board.get_cell_from_pgn('f2'))
-        self.board.get_cell_from_pgn('f2').move_piece(self.board.get_cell_from_pgn('g3'))
-        self.board.get_cell_from_pgn('g3').move_piece(self.board.get_cell_from_pgn('h4'))
-        ########
+        # self.board.get_cell_from_pgn('e1').move_piece(self.board.get_cell_from_pgn('f2'))
+        # self.board.get_cell_from_pgn('f2').move_piece(self.board.get_cell_from_pgn('g3'))
+        # self.board.get_cell_from_pgn('g3').move_piece(self.board.get_cell_from_pgn('h4'))
+        # ########
         
         self.current_turn: Player = player1 if player1.color == Colors.WHITE else player2
         

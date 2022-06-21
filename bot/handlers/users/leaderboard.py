@@ -32,6 +32,6 @@ async def command_top(message: Message, session: AsyncSession):
     if not current_user_in_top:
         rating = await get_user_rating(session, message.from_user.id)
         pos = await get_leaderboard_position(session, message.from_user.id)
-        text += html.underline(f"...\n<b>{pos}. {message.from_user.first_name} (You) rating: {round(rating)}</b>")
+        text += '...\n' + html.underline(f"<b>{pos}. {message.from_user.first_name} (You) rating: {round(rating)}</b>")
     
     await message.answer(text=text)

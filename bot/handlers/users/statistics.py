@@ -43,7 +43,7 @@ async def command_stats(message: Message, session: AsyncSession):
     if stats['total_games'] >= 1:
         games.reverse()
         i = 1
-        games_text = "<b>Your previous games:</b>\n\n\n"
+        games_text = "<b>Your previous games:</b>\n\n"
         for game in games:
             games_text += f"{i}. <b>{message.from_user.first_name} vs {game.opponent_name} ({round(game.opponent_rating)})</b> <b>{game.result}</b>\n\n"
             i += 1
