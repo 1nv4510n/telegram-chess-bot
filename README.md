@@ -25,6 +25,6 @@ python bot.py
 ```
 
 ## Environments setup
-```BOT_TOKEN``` - Telegram bot token
-```BOT_FSM_STORAGE``` - ```memory``` or ```redis``` storage
+```BOT_TOKEN``` - Telegram bot token  
+```BOT_FSM_STORAGE``` - ```memory``` or ```redis``` storage  
 ```POSTGRES_DSN``` - PostgresSQL Data Source Name
