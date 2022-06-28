@@ -4,7 +4,7 @@
 
 - ##### Enemy search system
 - ##### Player statistics
-- ##### PostgresSQL and Redis (WIP) support
+- ##### PostgreSQL and Redis (WIP) support
 - ##### Leaderboard
 - ##### ELO rating system
 - ##### Full asynchronous support
@@ -13,6 +13,7 @@
 - [Aiogram](https://github.com/aiogram/aiogram)
 - [Pillow](https://github.com/python-pillow/Pillow)
 - [SQLAlchemy](https://github.com/sqlalchemy/sqlalchemy)
+- [pydantic](https://github.com/samuelcolvin/pydantic)
 
 ## Installation
 
@@ -26,5 +27,5 @@ python bot.py
 
 ## Environments setup
 ```BOT_TOKEN``` - Telegram bot token  
-```BOT_FSM_STORAGE``` - ```memory``` or ```redis``` storage  
-```POSTGRES_DSN``` - PostgresSQL Data Source Name
+```BOT_FSM_STORAGE``` - ```memory``` or ```redis``` (WIP) storage  
+```POSTGRES_DSN``` - PostgreSQL Data Source Name

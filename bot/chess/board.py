@@ -1,4 +1,3 @@
-import re
 from typing import List, Optional, Union
 from typing_extensions import Self
 from copy import deepcopy

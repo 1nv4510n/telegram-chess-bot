@@ -1,9 +1,8 @@
 from typing import List
-from uuid import UUID
 
 from bot.chess.enums import PieceIcons, PieceNames, Colors, ChessStatus
 
-from .board import Board, Cell
+from .board import Board
 from .pieces import *
 from .player import Player
 from .draw import draw_board
@@ -18,7 +17,7 @@ class Game:
         self.board = Board()
         self.board.add_pieces()
         
-        # #TEST###
+        # # TEST BOARD
         # self.board.get_cell_from_pgn('d2').piece = None
         # self.board.get_cell_from_pgn('e2').piece = None
         # self.board.get_cell_from_pgn('d7').piece = None

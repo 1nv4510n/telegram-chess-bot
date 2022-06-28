@@ -3,7 +3,7 @@ from aiogram import Bot, Router, F
 from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.dispatcher.fsm.storage.memory import MemoryStorage
 from aiogram.dispatcher.fsm.storage.base import StorageKey
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, BufferedInputFile
 
 from sqlalchemy.ext.asyncio.session import AsyncSession
 import random
@@ -18,9 +18,6 @@ from bot.states import ChessStates
 from bot.chess.enums import Colors, PieceIcons
 from bot.chess.player import Player
 from bot.chess.game import Game
-
-white_board_id = 'AgACAgIAAxkDAAIFBWKeYNoX9DgRKFpkAe0m7p7RJrKfAALzvTEbPZzxSG7cOa7BI5ggAQADAgADbQADJAQ'
-black_board_id = 'AgACAgIAAxkDAAIFB2KeYNv0XC-bQrsgtavJVqro9srWAALauzEbQUPwSPa9z_dKH3wLAQADAgADbQADJAQ'
 
 router = Router()
 
@@ -105,22 +102,22 @@ async def new_game(message: Message, bot: Bot, fsm_storage: MemoryStorage, state
         
         player1_chat = await bot.get_chat(player1.id)
         player1_name = player1_chat.first_name
-        board1 = white_board_id if player1.color == Colors.WHITE else black_board_id
+        player1_board = await game.get_board_image(player1)
         
         player2_name = message.from_user.first_name
-        board2 = white_board_id if player2.color == Colors.WHITE else black_board_id
+        player2_board = await game.get_board_image(player2)
         
         icons = [PieceIcons.KNIGHT, PieceIcons.PAWN]
         await state.update_data({'icons' : [icon.value for icon in icons]})
         await fsm_storage.update_data(bot, player1_key, {'icons' : [icon.value for icon in icons]})
         
-        await bot.send_photo(player1.id, board1)
+        await bot.send_photo(player1.id, BufferedInputFile(file=player1_board, filename='board.jpg'))
         await asyncio.sleep(0.3)
         await bot.send_message(player1.id, 
                                game_found_text.format(name=player2_name, rating=round(player2.rating), color=player1.color.name),
                                reply_markup=make_icons_keyboard(icons))
         
-        await message.answer_photo(board2)
+        await message.answer_photo(photo=BufferedInputFile(file=player2_board, filename='board.jpg'))
         await asyncio.sleep(0.3)
         await message.answer(game_found_text.format(name=player1_name, rating=round(player1.rating), color=player2.color.name),
                                reply_markup=make_icons_keyboard(icons))
