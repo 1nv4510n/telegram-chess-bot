@@ -54,7 +54,7 @@ class Pawn(Piece):
         self.is_first_step = False
         
         if (self.color == Colors.BLACK and self.cell.y == 7):
-            self.cell = Queen(Colors.BLACK, self.cell)
+            self.cell.piece = Queen(Colors.BLACK, self.cell)
             
         if (self.color == Colors.WHITE and self.cell.y == 0):
-            self.cell = Queen(Colors.WHITE, self.cell)
+            self.cell.piece = Queen(Colors.WHITE, self.cell)
