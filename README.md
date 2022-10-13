@@ -17,10 +17,10 @@
 
 ## Installation
 
-Grab ```.env.dist``` file, rename it to ```.env```
+Grab ```env-example``` file, rename it to ```.env```
 ```sh
-git clone https://github.com/1nv4510n/chess_bot.git
-cd chess_bot
+git clone https://github.com/1nv4510n/telegram-chess-bot.git
+cd telegram-chess-bot
 pip install -r requirements.txt
 python bot.py
 ```
