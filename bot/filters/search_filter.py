@@ -1,11 +1,13 @@
 from aiogram.types import Message
-from aiogram.dispatcher.filters.base import BaseFilter
-from aiogram.dispatcher.fsm.context import FSMContext
+from aiogram.filters import BaseFilter
+from aiogram.fsm.context import FSMContext
 
 from bot.states import ChessStates
 
 class UserSearchingFilter(BaseFilter):
-    searching: bool
+    def __init__(self, searching: bool) -> None:
+        super().__init__()
+        self.searching = searching
     
     async def __call__(self, message: Message, state: FSMContext) -> bool:
         current_state = await state.get_state()
@@ -18,7 +20,9 @@ class UserSearchingFilter(BaseFilter):
             return False
         
 class UserPlayingFilter(BaseFilter):
-    playing: bool
+    def __init__(self, playing: bool) -> None:
+        super().__init__()
+        self.playing = playing
     
     async def __call__(self, message: Message, state: FSMContext) -> bool:
         current_state = await state.get_state()

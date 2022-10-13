@@ -1,11 +1,11 @@
 import asyncio
 from aiogram import Bot, Router, F, html
-from aiogram.dispatcher.fsm.storage.base import StorageKey
-from aiogram.dispatcher.fsm.storage.memory import MemoryStorage
-from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.types import Message, BufferedInputFile, ReplyKeyboardRemove
+from aiogram.filters import Command, Text
+from aiogram.fsm.storage.base import StorageKey
+from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.fsm.context import FSMContext
 from sqlalchemy.ext.asyncio.session import AsyncSession
-from bot.chess.enums import ChessStatus
 
 from bot.filters.search_filter import UserPlayingFilter
 from bot.filters.chess_filter import ValidTurnFilter
@@ -16,12 +16,13 @@ from bot.keyboards.kb_chess import *
 from bot.db.requests import update_user_data, log_game
 
 from bot.chess import Game, Player
+from bot.chess.enums import ChessStatus
 from bot.utils import make_game_dict, change_user_ratings
 
 router = Router()
 
-@router.message(UserPlayingFilter(playing=True), F.text == 'Resign')
-@router.message(UserPlayingFilter(playing=True), commands=['resign'])
+@router.message(UserPlayingFilter(playing=True), Text('Resign'))
+@router.message(UserPlayingFilter(playing=True), Command('resign'))
 async def resign_game_handler(message: Message, bot: Bot, fsm_storage: MemoryStorage, state: FSMContext, session: AsyncSession) -> None:
     current_data = await state.get_data()
     current_player: Player = current_data['player']
@@ -75,7 +76,7 @@ async def resign_game_handler(message: Message, bot: Bot, fsm_storage: MemorySto
     for id in (message.from_user.id, enemy_id):
         await update_user_data(session, id, searching=False, playing=False, game_id=None)
         
-@router.message(UserPlayingFilter(playing=True), ValidTurnFilter(), F.text == 'Change piece')
+@router.message(UserPlayingFilter(playing=True), ValidTurnFilter(), Text('Change piece'))
 async def change_piece_handler(message: Message, state: FSMContext) -> None:
     current_data = await state.get_data()
     current_game: Game = current_data['game']
@@ -330,5 +331,3 @@ async def check_escape_move_handler(message: Message, bot: Bot, fsm_storage: Mem
         await state.clear()
         await fsm_storage.set_state(bot, enemy_key, None)
         await fsm_storage.set_data(bot, enemy_key, {})
-        
-        

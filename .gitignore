@@ -1,16 +1,5 @@
 .vscode/
-bot/chess/pieces/__pycache__/
 .env
-bot/__pycache__/
-bot/chess/__pycache__/
-bot/db/__pycache__/
-bot/handlers/__pycache__/
-bot/middlewares/__pycache__/
-bot/handlers/users/__pycache__/
-bot/handlers/errors/__pycache__/
-bot/handlers/admins/__pycache__/
-bot/keyboards/__pycache__/
-bot/filters/__pycache__/
-bot/utils/__pycache__/
+*.py[cod]
 todo-list
 bot.log

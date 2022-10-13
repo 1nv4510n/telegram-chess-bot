@@ -1,5 +1,6 @@
 from aiogram import Router, F
 from aiogram.types import Message
+from aiogram.filters import Command, Text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.filters.search_filter import UserPlayingFilter, UserSearchingFilter
@@ -10,8 +11,8 @@ from bot.db.requests import get_game_history, get_user_rating
 
 router = Router()
 
-@router.message(UserPlayingFilter(playing=False), UserSearchingFilter(searching=False), F.text == 'Statistics')
-@router.message(UserPlayingFilter(playing=False), UserSearchingFilter(searching=False), commands=['stats'])
+@router.message(UserPlayingFilter(playing=False), UserSearchingFilter(searching=False), Text('Statistics'))
+@router.message(UserPlayingFilter(playing=False), UserSearchingFilter(searching=False), Command('stats'))
 async def command_stats(message: Message, session: AsyncSession):
     games = await get_game_history(session, message.from_user.id)
     rating = await get_user_rating(session, message.from_user.id)

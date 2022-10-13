@@ -1,5 +1,6 @@
 from aiogram import Router, F, html
 from aiogram.types import Message
+from aiogram.filters import Text, Command
 from sqlalchemy.ext.asyncio import AsyncSession
 from bot.filters.search_filter import UserPlayingFilter, UserSearchingFilter
 
@@ -8,8 +9,8 @@ from bot.db.requests import get_top_users, get_leaderboard_position, get_user_ra
 
 router = Router()
 
-@router.message(UserPlayingFilter(playing=False), UserSearchingFilter(searching=False), F.text == 'Leaderboard')
-@router.message(UserPlayingFilter(playing=False), UserSearchingFilter(searching=False), commands=['top'])
+@router.message(UserPlayingFilter(playing=False), UserSearchingFilter(searching=False), Text('Leaderboard'))
+@router.message(UserPlayingFilter(playing=False), UserSearchingFilter(searching=False), Command('top'))
 async def command_top(message: Message, session: AsyncSession):
     users = await get_top_users(session)
     

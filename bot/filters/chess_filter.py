@@ -1,10 +1,13 @@
 from aiogram.types import Message
-from aiogram.dispatcher.filters.base import BaseFilter
-from aiogram.dispatcher.fsm.context import FSMContext
+from aiogram.filters import BaseFilter
+from aiogram.fsm.context import FSMContext
 
 from bot.states import ChessStates
 
 class ValidTurnFilter(BaseFilter):
+    def __init__(self) -> None:
+        super().__init__()
+    
     async def __call__(self, message: Message, state: FSMContext) -> bool:
         current_state = await state.get_state()
         if current_state is None or current_state == ChessStates.searching.state:

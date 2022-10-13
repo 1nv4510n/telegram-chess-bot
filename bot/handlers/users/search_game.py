@@ -1,9 +1,10 @@
 import asyncio
 from aiogram import Bot, Router, F
-from aiogram.dispatcher.fsm.context import FSMContext
-from aiogram.dispatcher.fsm.storage.memory import MemoryStorage
-from aiogram.dispatcher.fsm.storage.base import StorageKey
 from aiogram.types import Message, CallbackQuery, BufferedInputFile
+from aiogram.filters import Text, Command
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.fsm.storage.base import StorageKey
 
 from sqlalchemy.ext.asyncio.session import AsyncSession
 import random
@@ -21,14 +22,14 @@ from bot.chess.game import Game
 
 router = Router()
 
-@router.callback_query(ChessStates.searching, text='stop_search')
+@router.callback_query(ChessStates.searching, Text('stop_search'))
 async def stop_search(call: CallbackQuery, state: FSMContext, session: AsyncSession):
     await update_user_data(session, call.from_user.id, searching=False, playing=False)
     await state.clear()
     await call.message.edit_text('<b>Game search stopped.</b>')
 
-@router.message(F.text == 'New game')
-@router.message(commands=['new_game'])
+@router.message(Text('New game'))
+@router.message(Command('new_game'))
 async def new_game(message: Message, bot: Bot, fsm_storage: MemoryStorage, state: FSMContext, session: AsyncSession):
     current_state = await state.get_state()
     if current_state is not None:
