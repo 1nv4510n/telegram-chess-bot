@@ -1,4 +1,5 @@
 from typing import List, Union
+from pathlib import Path
 from PIL import Image, ImageDraw
 from io import BytesIO
 from .enums import BoardParam
@@ -14,7 +15,7 @@ def get_offsets(cells: List[List[Cell]], turn_over: bool) -> List[List[Union[str
                 if target_cell.piece:
                     offsets.append(
                         [
-                            f'bot\\chess\\pieces\\{target_cell.piece.logo}',
+                            Path('bot/chess/pieces/') / target_cell.piece.logo,
                             (target_cell.x * BoardParam.CELL_SIZE.value + BoardParam.OFFSET_X.value, target_cell.y * BoardParam.CELL_SIZE.value + BoardParam.OFFSET_Y.value)
                         ]
                     )
@@ -26,7 +27,7 @@ def get_offsets(cells: List[List[Cell]], turn_over: bool) -> List[List[Union[str
                 if target_cell.piece:
                     offsets.append(
                         [
-                            f'bot\\chess\\pieces\\{target_cell.piece.logo}', 
+                            Path('bot/chess/pieces/') / target_cell.piece.logo, 
                         ((BoardParam.BOARD_SIZE.value - 1 - target_cell.x) * BoardParam.CELL_SIZE.value + BoardParam.ROTATE_OFFSET_X.value, 
                         (BoardParam.BOARD_SIZE.value - 1 - target_cell.y) * BoardParam.CELL_SIZE.value + BoardParam.ROTATE_OFFSET_Y.value)
                         ]
@@ -51,7 +52,7 @@ def draw_pure_board() -> None:
                     draw.rectangle([i, j, i + cell_size - 1, j + cell_size - 1], fill = (235, 213, 180), width=0)
 
 def draw_board(board: Board, turn_over: bool) -> bytes:
-    pure_board = Image.open('bot\\chess\\pure_board.png', 'r')
+    pure_board = Image.open('bot/chess/pure_board.png', 'r')
     if turn_over:
         pure_board = pure_board.rotate(180)
     

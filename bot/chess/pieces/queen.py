@@ -1,8 +1,8 @@
 from bot.chess.enums import Colors, PieceIcons, PieceNames
 from .piece import Piece
 
-black_logo = 'logo\\black_queen.png'
-white_logo = 'logo\\white_queen.png'
+black_logo = 'logo/black_queen.png'
+white_logo = 'logo/white_queen.png'
 
 class Queen(Piece):
     def __init__(self, color: Colors, cell) -> None:

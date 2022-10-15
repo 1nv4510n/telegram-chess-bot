@@ -1,8 +1,8 @@
 from bot.chess.enums import Colors, PieceIcons, PieceNames
 from .piece import Piece
 
-black_logo = 'logo\\black_rook.png'
-white_logo = 'logo\\white_rook.png'
+black_logo = 'logo/black_rook.png'
+white_logo = 'logo/white_rook.png'
 
 class Rook(Piece):
     def __init__(self, color: Colors, cell) -> None:
